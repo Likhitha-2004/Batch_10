@@ -1,0 +1,88 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.HashMap" %>
+<%@ page import="java.util.Map" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ice Cream Order App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 300px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ice Cream Order</h2>
+    <form action="IceCreamOrderApp.jsp" method="post">
+        <label for="flavor">Select a flavor:</label><br>
+        <select name="flavor" id="flavor">
+            <option value="Vanilla">Vanilla ($2.50)</option>
+            <option value="Chocolate">Chocolate ($3.00)</option>
+            <option value="Strawberry">Strawberry ($2.75)</option>
+            <option value="Mint">Mint ($3.25)</option>
+            <option value="Mango">Mango ($3.50)</option>
+        </select><br><br>
+
+        <label>Select toppings:</label><br>
+        <input type="checkbox" name="toppings" value="Sprinkles" /> Sprinkles ($0.50)<br>
+        <input type="checkbox" name="toppings" value="ChocChips" /> Chocolate Chips ($0.75)<br>
+        <input type="checkbox" name="toppings" value="WhippedCream" /> Whipped Cream ($1.00)<br>
+        <input type="checkbox" name="toppings" value="Nuts" /> Nuts ($1.25)<br><br>
+
+        <input type="submit" value="Place Order" />
+    </form>
+
+    <%
+        // Prices for flavors and toppings
+        Map<String, Double> flavorPrices = new HashMap<>();
+        flavorPrices.put("Vanilla", 2.50);
+        flavorPrices.put("Chocolate", 3.00);
+        flavorPrices.put("Strawberry", 2.75);
+        flavorPrices.put("Mint", 3.25);
+        flavorPrices.put("Mango", 3.50);
+
+        Map<String, Double> toppingPrices = new HashMap<>();
+        toppingPrices.put("Sprinkles", 0.50);
+        toppingPrices.put("ChocChips", 0.75);
+        toppingPrices.put("WhippedCream", 1.00);
+        toppingPrices.put("Nuts", 1.25);
+
+        // Get the selected flavor and toppings
+        String selectedFlavor = request.getParameter("flavor");
+        String[] selectedToppings = request.getParameterValues("toppings");
+
+        if (selectedFlavor != null) {
+            double totalCost = flavorPrices.get(selectedFlavor);
+            if (selectedToppings != null) {
+                for (String topping : selectedToppings) {
+                    totalCost += toppingPrices.get(topping);
+                }
+            }
+
+            out.println("<h3>Your Order Summary</h3>");
+            out.println("<p>Flavor: " + selectedFlavor + "</p>");
+            if (selectedToppings != null) {
+                out.println("<p>Toppings: " + String.join(", ", selectedToppings) + "</p>");
+            } else {
+                out.println("<p>Toppings: None</p>");
+            }
+            out.printf("<p>Total Cost: $%.2f</p>", totalCost);
+        }
+    %>
+</div>
+
+</body>
+</html>
